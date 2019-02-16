@@ -1,0 +1,15 @@
+{
+  :deps {}}
+
+  ; :aliases 
+  ;   ;; clj -R:nREPL -m nrepl.cmdline
+  ;   { :nrepl
+  ;     { :extra-deps
+  ;       { nrepl/nrepl {:mvn/version "0.6.0"}}}}}  
+
+      ;; cider/piggieback {:mvn/version "0.4.0"}
+
+; clojure.java-time {:mvn/version "0.3.2"}
+
+;.
+
