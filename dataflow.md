@@ -2,14 +2,17 @@
 
 ## Redis keys
 
-- `event_stream`  
+- `event_queue`  
   inbound event queue
 
-- `event_stream_seq`  
+- `event_queue_seq`  
   eid sequence counter
 
-- `user_notify`  
-  key: "user:<user_id>"
+- `user_notify_queue`  
+
+- `user_notify_queue_deleyed`  
+
+- `user_notify_data:<user_id>`  
   ttl?
 
 ### Event structure
@@ -56,3 +59,7 @@ Basic fields:
   }
 }
 ```
+
+#### Private message notify
+
+TODO:
