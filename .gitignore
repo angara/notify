@@ -61,4 +61,8 @@
 !.npmingore
 !yarn.lock
 
+# vscode java
+!.classpath
+!.project
+
 #.

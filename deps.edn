@@ -1,13 +1,21 @@
 {
-  :paths ["src"]
+  :paths ["src" "out/classes"]
 
   :deps 
   {
-    redis-client  {:local/root "./lib/jedis-3.0.1.jar"}
-    cheshire      {:mvn/version "5.8.1"}}
-  
+    cheshire  {:mvn/version "5.8.1"}}
+
   :aliases
   {
+    ;; clj -A:java:nrepl
+    :java
+    {
+      :extra-paths ["java"]
+      :extra-deps 
+      {
+        redis-client  {:local/root "./lib/jedis-3.0.1.jar"}
+        json          {:local/root "./lib/json-20180813.jar"}}}
+      
     :nrepl 
     {
       :extra-deps {nrepl/nrepl {:mvn/version "0.6.0"}}  

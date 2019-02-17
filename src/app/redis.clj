@@ -3,7 +3,9 @@
   (:import 
     [java.util Date]
     [java.net URI]
-    [redis.clients.jedis Jedis JedisPool JedisPoolConfig JedisPubSub])
+    [redis.clients.jedis Jedis JedisPool JedisPoolConfig JedisPubSub]
+    [org.json JSONObject]
+    [anga Hello RedisEventQueue])
   (:require
     [cheshire.core :refer [generate-string parse-string]]))
 ;
@@ -86,6 +88,28 @@
   1)
 ;
 
+(defn json-object []
+  (doto (JSONObject.)
+    (.put "eid" "123")                                                                                       
+    (.put "ts" 12345678)
+    (.put "type" "msg")
+    (.put "msg"
+          (doto (JSONObject.)
+            (.put "text" "message text")))))
+;
+
+(comment
+  (.toString
+    (json-object))
+
+  (let [r (RedisEventQueue. (System/getenv "REDIS_ANGARA") EVENT_QUEUE)
+        j (doto (JSONObject.)
+            (.put "text" "qwe 123"))]
+    (.send r "test" j))
+
+  1)
+;
+  ;; org.json builder
 
 ;; (def r (URL. "redis://user:pass@host:6379/db"))
 
