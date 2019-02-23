@@ -1,7 +1,6 @@
 
-(ns app.main)
-
-(gen-class)
+(ns app.main
+  (:gen-class))
 
 (comment
   (+ 1 2 3)
@@ -10,6 +9,7 @@
   "123")
 ;
 
-(defn main- [argv]
+
+(defn -main [& argv]
   (println "app.main!"))
 ;

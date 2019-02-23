@@ -8,12 +8,12 @@
 - `event_queue_seq`  
   eid sequence counter
 
-- `user_notify_queue`  
+- `notify_user_queue`  
 
-- `user_notify_queue_deleyed`  
+- `notify_user_queue_deleyed`  
 
-- `user_notify_data:<user_id>`  
-  ttl?
+- `notify_user_data:<user_id>`  
+  lst of user related notifications
 
 ### Event structure
 
@@ -32,7 +32,8 @@ Basic fields:
 
 ```javascript
 {
-  eid, ts,
+  eid,
+  ts,
   type: "forum_msg",
   forum_msg: {
     msg_id: "\d+",
@@ -48,7 +49,8 @@ Basic fields:
 
 ```javascript
 {
-  eid, ts,
+  eid,
+  ts,
   type: "forum_topic",
   forum_topic: {
     user_id: "\d+",
@@ -62,4 +64,14 @@ Basic fields:
 
 #### Private message notify
 
-TODO:
+```javascript
+{
+  eid, ts,
+  type: "private_message",
+  private_message: {
+    user_id: "\d+",
+    to_id: "\d+",
+    text: "...."
+  }
+}
+```
