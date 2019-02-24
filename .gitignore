@@ -44,6 +44,7 @@
 
 ## build dirs
 /bin/
+/classes/
 /build/
 /target/
 /pkg/
