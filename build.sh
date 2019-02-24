@@ -7,7 +7,7 @@ export TIMESTAMP=`date -Isec`
 
 export CLASSES="tmp/classes"
 
-mkdir -p ${CLASSES}
+rm -r ${CLASES} && mkdir -p ${CLASSES}
 BUILD_PROPS="${CLASSES}/build.properties"
 
 echo "appname=${APPNAME}"     >  ${BUILD_PROPS}

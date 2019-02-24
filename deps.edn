@@ -5,7 +5,10 @@
   {
     org.clojure/clojure       {:mvn/version "1.10.0"}
     org.clojure/tools.logging {:mvn/version "0.4.1"}
-    cheshire/cheshire         {:mvn/version "5.8.1"}}
+
+
+    cheshire       {:mvn/version "5.8.1"}
+    mount          {:mvn/version "0.1.16"}}
 
     ; org.clojure/clojurescript {:mvn/version "1.10.520"}}
 

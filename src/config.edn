@@ -1,0 +1,16 @@
+{
+  ;; main project config file
+
+  :notify 
+  {
+    :appname "notify"}
+  
+  ;; datasource
+
+  :redis 
+  {
+    :url {"${REDIS_ANGARA}"}}}
+
+;;.
+  
+
