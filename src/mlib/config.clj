@@ -6,7 +6,7 @@
   (:require
     [clojure.walk :refer [postwalk]]
     [mount.core :refer [defstate args]]
-    [mlib.util :refer [deep-merge edn-resource]]))
+    [mlib.util :refer [deep-merge]]))
 ;
 
 (defn $subst 
@@ -42,15 +42,12 @@
   .)
 ;
 
-(defn load-configs [& edns]
-  (postwalk
-    #($subst %1 (System/getenv))
-    (deep-merge edns)))
-;
-
 (defstate conf
   :start
-    (load-configs (edn-resource "config.edn") (args)))
+    (->>
+      (apply deep-merge (args))
+      (postwalk 
+        #($subst %1 (System/getenv)))))
 ;
 
 ;;.

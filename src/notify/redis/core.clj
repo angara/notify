@@ -1,11 +1,11 @@
 
 (ns notify.redis.core
   (:require
-    [notify.build :refer [props]]))
+    [mlib.config :refer [conf]]))
 ;
 
 (defn hello []
-  (prn "hello props:" (props)))
+  (prn "hello conf:" conf))
 ;
 
 ;;.

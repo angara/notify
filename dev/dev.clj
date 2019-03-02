@@ -2,39 +2,44 @@
 (ns dev
   (:require
     [clojure.walk :refer [postwalk]]
-    [mount.core :refer [start-with-args]]
-
+;    [mount.core :refer [start-with-args]]
     [mlib.config :refer [conf]]
-
-    [notify.build :as build]
     [notify.redis.core :refer [hello]]))
-
-(defn dev-props []
-  (alter-var-root #'build/BUILD_PROPERTIES 
-    (constantly 
-      (delay 
-        { :appname "notify-dev" 
-          :version "dev-version"
-          :timestamp "2019-mm-ddThh:mm:ss"
-          :commit "xxxxxxxxxxxxx"}))))
 ;
 
+(require '[mount.core :as mount])
 
-(defn run []
-  (dev-props)
-  (prn "run props:" (build/props))
-  (hello))
-;
+; mount
+; *ns*
+; postwalk
+; (defn dev-props []
+;   (alter-var-root #'build/BUILD_PROPERTIES 
+;     (constantly 
+;       (delay 
+;         { :appname "notify-dev" 
+;           :version "dev-version"
+;           :timestamp "2019-mm-ddThh:mm:ss"
+;           :commit "xxxxxxxxxxxxx"}))))
+; ;
+
+
+; (defn run []
+;   (dev-props)
+;   (hello))
+; ;
 
 (def conf1 
   {"${1}" 
     { :a "a"
       :b "${2}"}})
 
-
 ;
 (comment
   (run)
+
+  mount
+
+  conf 
 
   clojure.core/*compile-path*
 
@@ -44,7 +49,7 @@
 
   (prn "conf:" conf)
 
-  :.)
+  .)
 ;
 
 ;;.

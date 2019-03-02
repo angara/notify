@@ -8,12 +8,14 @@ export TIMESTAMP=`date -Isec`
 export CLASSES="tmp/classes"
 
 rm -r ${CLASES} && mkdir -p ${CLASSES}
-BUILD_PROPS="${CLASSES}/build.properties"
+BUILD_EDN="${CLASSES}/build.edn"
 
-echo "appname=${APPNAME}"     >  ${BUILD_PROPS}
-echo "version=${VERSION}"     >> ${BUILD_PROPS}
-echo "commit=${COMMIT}"       >> ${BUILD_PROPS}
-echo "timestamp=${TIMESTAMP}" >> ${BUILD_PROPS}
+echo "" > ${BUILD_EDN}
+echo "{">>${BUILD_EDN}
+echo ":appname \"${APPNAME}\"">>${BUILD_EDN}
+echo ":version \"${VERSION}\"">>${BUILD_EDN}
+echo ":commit \"${COMMIT}\"">>${BUILD_EDN}
+echo ":timestamp \"${TIMESTAMP}\"">>${BUILD_EDN}
 
 clj -e "(set! *compile-path* \"${CLASSES}\") (compile 'notify.main)" \
   && clj -A:jar \

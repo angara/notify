@@ -3,14 +3,20 @@
 
   :notify 
   {
-    :appname "notify"}
+    :appname "anga/notify"}
   
   ;; datasource
 
   :redis 
   {
-    :url {"${REDIS_ANGARA}"}}}
+    :url "${REDIS_ANGARA}"}
 
+  :build
+  {
+    :appname    "notify-DEV"
+    :version    "0.0-DEV"
+    :commit     "xxxxxxxx-DEV"
+    :timestamp  "2019-DEV"}}
 ;;.
   
 

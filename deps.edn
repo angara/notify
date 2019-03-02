@@ -6,7 +6,6 @@
     org.clojure/clojure       {:mvn/version "1.10.0"}
     org.clojure/tools.logging {:mvn/version "0.4.1"}
 
-
     cheshire       {:mvn/version "5.8.1"}
     mount          {:mvn/version "0.1.16"}}
 
@@ -33,6 +32,12 @@
     :nrepl
     {
       :extra-paths ["dev"]
+      :extra-deps  { nrepl/nrepl {:mvn/version "0.6.0"}}  
+      :main-opts   ["-m" "nrepl.cmdline"]}
+
+    :cider
+    {
+      :extra-paths ["dev"]
       :extra-deps 
         { nrepl/nrepl       {:mvn/version "0.6.0"}  
           cider/cider-nrepl {:mvn/version "0.21.1"}}
@@ -41,7 +46,7 @@
     
     :jar
     {
-      :extra-paths ["tmp/classes"]
+      :extra-paths ["resources" "tmp/classes"]
       :extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
       :main-opts ["-m" "hf.depstar.uberjar" "tmp/notify.jar"]}
     
@@ -68,7 +73,7 @@
                   "--out out"
                   "--no-copy-source"]}
 
-    :the :end}}
+    :. :.}}
 
 ;; https://github.com/luchiniatwork/cambada
 ;; https://github.com/seancorfield/depstar
