@@ -1,13 +1,27 @@
 (ns notify.inbound.core
   (:require
-    [mount.core :refer [defstate]]))
+    [mount.core :refer [defstate]]
+    [mlib.thread :refer [start-loop stop-loop]]))
 ;
 
-(defn start-feeder [])
+(defn feeder-init [state']
+  (swap! state' assoc :conn "conn" :n 0)
+  (.println System/out (str @state')))
+;
+
+(defn feeder-step [state']
+  (.println System/out (str "step:" (:n (swap! state' update-in [:n] inc))))
+  (Thread/sleep 2000))
+;
+
+(defn feeder-cleanup [state ex]
+  (.println System/out (str "cleanup:" state ex)))
+;
 
 (defstate feeder
   :start
-    (start-feeder))
+    (start-loop feeder-init feeder-step feeder-cleanup)
+  :stop
+    (stop-loop feeder))
 
 ;;.
-
