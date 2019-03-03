@@ -4,30 +4,36 @@
     [clojure.walk :refer [postwalk]]
     [mount.core :as mount]
     [mlib.config :refer [conf]]
-    [notify.redis.core :refer [hello]]))
+    [mlib.util :refer [edn-read edn-resource]]
+
+    [notify.redis.core :as r]))
 ;
 
 
-(def conf1 
-  {"${1}" 
-    { :a "a"
-      :b "${2}"}})
+(def configs
+  [
+    (edn-resource "config.edn")
+    (edn-read "tmp/dev.edn")])
+;
 
 (defn restart[]
   (mount/stop)
-  (mount/start))
+  (mount/start-with-args configs))
 ;
+
+(def R (r/connect (-> conf :redis :url)))
 
 (comment
 
   (restart)
 
-  conf 
-  *out*
+  (get-in conf [:redis :url]) 
 
+  (r/fetch-event R)
 
   (mount/start-with-args [])
 
+  "https://github.com/ztellman/manifold"
 
   .)
 ;

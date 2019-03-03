@@ -1,7 +1,9 @@
 (ns notify.inbound.core
   (:require
     [mount.core :refer [defstate]]
-    [mlib.thread :refer [start-loop stop-loop]]))
+    [mlib.thread :refer [start-loop stop-loop]]
+    ;
+    [notify.redis.core :as redis]))
 ;
 
 (defn feeder-init [state']
@@ -11,7 +13,8 @@
 
 (defn feeder-step [state']
   (.println System/out (str "step:" (:n (swap! state' update-in [:n] inc))))
-  (Thread/sleep 2000))
+  (Thread/sleep 2000)
+  (throw (Error. "error!")))
 ;
 
 (defn feeder-cleanup [state ex]

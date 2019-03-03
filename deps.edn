@@ -7,8 +7,10 @@
     org.clojure/tools.logging {:mvn/version "0.4.1"}
     org.clojure/core.async    {:mvn/version "0.4.490"}
 
-    cheshire       {:mvn/version "5.8.1"}
-    mount          {:mvn/version "0.1.16"}}
+    cheshire                  {:mvn/version "5.8.1"}
+    mount                     {:mvn/version "0.1.16"}
+
+    redis.clients/jedis       {:mvn/version "3.0.1"}}
 
     ; org.clojure/clojurescript {:mvn/version "1.10.520"}}
 
