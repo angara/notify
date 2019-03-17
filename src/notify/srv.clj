@@ -1,10 +1,11 @@
-(ns notify.inbound.core
+
+(ns notify.srv
   (:require
     [mount.core :refer [defstate]]
-    [mlib.thread :refer [start-loop stop-loop]]
-    ;
-    [notify.redis.core refer [connect fetch-event]]))
+    [mlib.config :refer [conf]]
+    [notify.redis.core :refer [connect]]))
 ;
+
 
 (defn feeder-init [state']
   (let [redis (connect (-> conf :redis :url))]
@@ -18,7 +19,6 @@
 ;
 
 (defn feeder-cleanup [state ex]
-  
   (.println System/out (str "cleanup:" state ex)))
 ;
 

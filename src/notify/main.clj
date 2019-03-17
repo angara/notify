@@ -5,11 +5,10 @@
     [mount.core     :refer [start-with-args]]
     [mlib.config    :refer [conf]]
     [mlib.util      :refer [edn-read edn-resource]]
-    [notify.])
+    [mlib.logger    :refer [info debug]]
+    [notify.srv])
   (:gen-class))
 ;
-
-(def APP "anga/notify")
   
 (defn load-env-configs [env]
   (when env
@@ -19,7 +18,7 @@
 ;
 
 (defn -main [& argv]
-  (println APP "-" (.toString (java.util.Date.)))
+  (info "main start" APP)
   (start-with-args 
     (concat 
       [(edn-resource "config.edn") {:build (edn-resource "build.edn")}]
