@@ -22,6 +22,6 @@ clj -e "(set! *compile-path* \"${CLASSES}\") (compile 'notify.main)" \
   || exit 1
 
 echo "start command:"
-echo "    java -cp notify.jar notify.main pat/to/config.edn"
+echo "  CONFIG_EDN=pat/to/runtime.edn java -cp notify.jar notify.main"
 
 #.

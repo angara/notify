@@ -19,10 +19,10 @@
 ;
 
 (defn stdout-handler [logger & args]
-  (.println *out* (apply format-item logger args)))  
+  (.println System/out (apply format-item logger args)))  
 
 (defn stderr-handler [logger & args]
-  (.println *err* (apply format-item logger args)))  
+  (.println System/err (apply format-item logger args)))  
     
 (def level-handler-map 
   {

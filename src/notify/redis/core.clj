@@ -9,10 +9,8 @@
     [notify.const :refer [EVENT_QUEUE]]))
 ;
 
-
 ;; seconds to block on read queue
 (def redis-blockread-timeout 4)
-
 
 (defn connect [uri]
   (Jedis. (URI. uri)))

@@ -3,7 +3,16 @@
 
   :notify 
   {
-    :appname "anga/notify"}
+    :appname "anga/notify"
+    :telegram 
+    {
+      :timeout 3000
+      :retry 3}}
+      ;; :apikey "174999999:AeEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaEeA"
+      ;; :socks {:host "localhost" :port 9999}
+      ;;
+    ;; :firehose {:channel -1000000000000}
+
   
   ;; datasource
 
@@ -11,6 +20,7 @@
   {
     :url "${REDIS_ANGARA}"}
 
+  ;; runtime override by build.edn
   :build
   {
     :appname    "notify-DEV"

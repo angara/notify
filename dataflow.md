@@ -22,7 +22,7 @@ Basic fields:
 ```javascript
 {
   eid:  "seq++",
-  ts:   "timestamp",
+  ts:   "milliseconds",
   type: "event_type",
   // payload: { ... }
 }
