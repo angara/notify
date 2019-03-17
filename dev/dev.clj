@@ -7,9 +7,9 @@
     [mlib.util :refer [edn-read edn-resource]]
 
     [notify.redis.core :as r]
-    [notify.inbound.core :as inb]
+    [notify.process.inbound :as in]
 
-    [notify.telegram.tgapi :as tgapi]))
+    [mlib.tgapi :as tgapi]))
 ;
 
 
@@ -33,7 +33,7 @@
 
   (-> 
     (mount/only [#'conf #'inb/feeder])
-    ; (mountexcept [#'foo/c]
+    ; (mount/except [#'foo/c]
     (mount/with-args configs)
     (mount/start)))
 ;
@@ -55,11 +55,12 @@
     (catch Exception ex
       (ex-data ex)))
 
-  (get-in conf [:redis :url]) 
-
-  (r/fetch-event R)
-
-
+  
+  (let [redis (r/connect (-> conf :redis :url))]
+    (->
+      (r/fetch-event redis)
+      (in/dispatch)))
+;
 
   .)
 ;

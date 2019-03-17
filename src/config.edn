@@ -4,14 +4,14 @@
   :notify 
   {
     :appname "anga/notify"
+
+    ;; :firehose {:channel -1000000000000}  
     :telegram 
     {
       :timeout 3000
       :retry 3}}
       ;; :apikey "174999999:AeEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaEeA"
       ;; :socks {:host "localhost" :port 9999}
-      ;;
-    ;; :firehose {:channel -1000000000000}
 
   
   ;; datasource

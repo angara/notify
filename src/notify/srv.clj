@@ -5,7 +5,7 @@
     [mlib.config :refer [conf]]
     [mlib.logger :refer [debug info warn]]
     [notify.redis.core :refer [connect]]
-    [notify.inbound.core :refer [feeder]]))
+    [notify.process.inbound :refer [feeder]]))
 ;
 
 

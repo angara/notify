@@ -1,14 +1,11 @@
-(ns notify.telegram.tgapi
+(ns mlib.tgapi
   (:import 
     [java.net SocketTimeoutException])
   (:require
     [clojure.string :refer [escape]]
     [cheshire.core :refer [parse-string]]
     [clj-http.client :as http]
-    [clj-http.conn-mgr :refer [make-socks-proxied-conn-manager]]
-    ;
-    [mlib.config :refer [conf]]
-    [mlib.logger :refer [debug info warn]]))
+    [clj-http.conn-mgr :refer [make-socks-proxied-conn-manager]]))
 ;
 
 (def TIMEOUT 5000)
@@ -24,7 +21,6 @@
 ;
 
 (defn api-try [url data]
-  (Thread/sleep DELAY)
   (try
     (let [{:keys [status body]} (http/post url data)]
       (case status
@@ -38,7 +34,7 @@
 ;
 
 (defn api 
-  "{:apikey '.......', :timeout 3000, :retry 3, :socks {:host '' :port 9999}}"
+  "{:apikey '...', :timeout 3000, :retry 3, :socks {:host '' :port 9999}}"
   [cfg method params] 
   (let [tout  (:timeout cfg TIMEOUT)
         rmax  (:retry   cfg RETRY)
@@ -53,7 +49,8 @@
                :conn-timeout tout}]
     (loop [retry rmax]
       (if (< 0 retry)
-        (let [res (api-try url data)]
+        (let [_ (Thread/sleep DELAY)    ;; calc proper delay
+              res (api-try url data)]
           (if (= res ::retry)
             (recur (dec retry))
             res))

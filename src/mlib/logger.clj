@@ -15,7 +15,7 @@
 ;
 
 (defn format-item [logger & args]
-  (str (timestamp) " " (:name logger) " " (apply print-str args)))
+  (str (timestamp) " " (:name logger) " " (apply pr-str args)))
 ;
 
 (defn stdout-handler [logger & args]
