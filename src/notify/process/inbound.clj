@@ -35,17 +35,17 @@
 ;
 
 (defn feeder-step [state']
+  ;;;
   (let [n (:n (swap! state' update-in [:n] (fnil inc 0)))]
     (debug "feeder-step:" n)
-    (when (<= 10 n)
+    (when (<= 50 n)
       (mlib.thread/clear-loop-flag state'))
-    (Thread/sleep 1000))
-  ;
+    (Thread/sleep 100))
+  ;;;
   (->
     (:redis @state')
     (fetch-event)
     (dispatch)))
-  
 ;
 
 (defn feeder-cleanup [state ex]

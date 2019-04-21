@@ -7,7 +7,7 @@
 ;
 
 (defn hide-text [s]
-  (str "[Removed " (count s) " chars]"))
+  (str "[Private text: " (count s) " chars]"))
 ;
 
 (defn mail [event]
@@ -15,6 +15,8 @@
 
   (firehose
     (update-in event [:private_message :text] hide-text)))
+
+  
 ;
 
 ;;.

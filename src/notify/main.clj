@@ -20,7 +20,7 @@
 (defn -main [& argv]
   (info "main start" APP)
   (start-with-args 
-    (concat 
+    (concat e
       [(edn-resource "config.edn") {:build (edn-resource "build.edn")}]
       (load-env-configs (System/getenv "CONFIG_EDN")))))
 ;

@@ -16,9 +16,16 @@
   
   ;; datasource
 
-  :redis 
-  {
-    :url "${REDIS_ANGARA}"}
+  :redis {:url "${REDIS_ANGARA}"}
+  ;; redis://angara:PASS@dbm:6379/0
+
+  :psql {:jdbc-url "${JDBC_ANGARA}"}
+
+  :mdb-angara {:url "${MDB_ANGARA}"}
+  ;; mongodb://angara:PASSWORD@dbm:27017/angara
+  
+  ;; jdbc:postgresql://dbm:5432/angara?user=angara&password=PASSWORD
+  ;; https://github.com/tomekw/hikari-cp/
 
   ;; runtime override by build.edn
   :build
