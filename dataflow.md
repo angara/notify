@@ -10,7 +10,7 @@
 
 - `notify_user_queue`  
 
-- `notify_user_queue_deleyed`  
+- `notify_user_queue_delayed`  
 
 - `notify_user_data:<user_id>`  
   lst of user related notifications
@@ -69,6 +69,7 @@ Basic fields:
   eid, ts,
   type: "private_message",
   private_message: {
+    id: "\d+",    // msg_id
     user_id: "\d+",
     to_id: "\d+",
     text: "...."

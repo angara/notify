@@ -49,7 +49,10 @@
     {:id id}))
 
 (comment
-  (get-mail 1001)
+  (get-mail 1010)
+
+  (:atime (mdb/get-user "1"))
+
   .)
 
 (defn restart[]
@@ -58,7 +61,7 @@
 
   (-> 
     ; (mount/only [#'conf #'in/feeder])
-    ; (mount/except [#'in/feeder])
+    (mount/except [#'in/feeder])
     (mount/with-args (configs))
     (mount/start)))
 ;
@@ -71,6 +74,7 @@
   (mount/only [#'in/feeder])
 
   (mount/only [#'mdb/mdb])
+  (mount/only [#'notify.db.sql/ds])
 
   mdb/mdb
 
