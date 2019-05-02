@@ -14,7 +14,7 @@
   (debug "private/mail:" event)
 
   (firehose
-    (update-in event [:private_message :text] hide-text))
+    (update-in event [:private_message :text] hide-text)))
 
   
   ; (let [user (get-user )])

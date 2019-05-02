@@ -57,10 +57,10 @@
 
 (extend-protocol ConvertToDBObject
   LocalDateTime
-  (to-db-object [input]
-    (to-db-object (Date/from (.toInstant input (ZoneId/systemDefault)))))
+  (to-db-object [^LocalDateTime input]
+    (to-db-object (Date/from (.toInstant (.atZone input (ZoneId/systemDefault))))))
   ZonedDateTime
-  (to-db-object [input]
+  (to-db-object [^ZonedDateTime input]
     (to-db-object (Date/from (.toInstant input (ZoneId/systemDefault))))))
 
 (extend-protocol ConvertFromDBObject

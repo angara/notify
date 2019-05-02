@@ -8,13 +8,6 @@
 - `event_queue_seq`  
   eid sequence counter
 
-- `notify_user_queue`  
-
-- `notify_user_queue_delayed`  
-
-- `notify_user_data:<user_id>`  
-  lst of user related notifications
-
 ### Event structure
 
 Basic fields:
@@ -34,8 +27,8 @@ Basic fields:
 {
   eid,
   ts,
-  type: "forum_msg",
-  forum_msg: {
+  type: "forum_msg",    // changed to "forum_message"
+  forum_msg: {          // changed to `forum_message:`
     msg_id: "\d+",
     user_id: "\d+",
     topic_id: "\d+",

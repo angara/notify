@@ -1,6 +1,7 @@
 
 (ns dev
   (:require
+    [java-time :as time]
     [clojure.walk :refer [postwalk]]
     [mount.core :as mount]
 
@@ -11,6 +12,7 @@
     [mlib.tgapi :as tgapi]
     [mlib.sql :refer [fetch fetch-one exec]]
 
+    [notify.const :as const]
     [notify.redis.core :as r]
     [notify.process.inbound :as in]
 
@@ -35,32 +37,9 @@
     (mount/start)))
 ;
 
-(def SELECT_MAIL
-  (->
-    (h/select :*)
-    (h/from :mail_msg)
-    (h/where [:= :id :?id])))
-;
-
-
-(defn get-mail [id]
-  (fetch-one
-    SELECT_MAIL
-    {:id id}))
-
-(comment
-  (get-mail 1010)
-
-  (:atime (mdb/get-user "1"))
-
-  .)
-
 (defn restart[]
   (mount/stop)
-;  (mount/start-with-args configs)
-
   (-> 
-    ; (mount/only [#'conf #'in/feeder])
     (mount/except [#'in/feeder])
     (mount/with-args (configs))
     (mount/start)))
@@ -70,11 +49,26 @@
 
 
 (comment
+  (restart)
+
+  (sql/get-mail 1012)
+
+  (sql/topic-unread-watch "18896")
+
+  (:atime (mdb/get-user "1"))
+
+
+  (let [uid "1"]
+        ;atime (time/minus (time/local-date-time) (time/seconds 200))]
+    (mdb/user-online? uid const/USER_ONLINE_INTERVAL))
 
   (mount/only [#'in/feeder])
 
+  
   (mount/only [#'mdb/mdb])
   (mount/only [#'notify.db.sql/ds])
+
+  (mount/start [#'in/feeder])
 
   mdb/mdb
 

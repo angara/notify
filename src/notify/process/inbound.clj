@@ -15,9 +15,19 @@
     [notify.sender.telegram :refer [firehose]]))
 ;
 
+(defn- fixup-forum-msg [event]
+  (-> event
+    (assoc 
+      :type C/EVENT_TYPE_FORUM_MESSAGE 
+      :forum_message (:forum_msg event))
+    (dissoc :forum_msg)))
+;
+
 (defn dispatch [event]
   (condp = (:type event)
-    C/EVENT_TYPE_FORUM_MSG       (forum/msg     event)
+    C/EVENT_TYPE_FORUM_MSG       (-> event fixup-forum-msg forum/message)
+    ;;
+    C/EVENT_TYPE_FORUM_MESSAGE   (forum/message event)
     C/EVENT_TYPE_FORUM_TOPIC     (forum/topic   event)
     C/EVENT_TYPE_FORUM_MODER     (forum/moder   event)
     C/EVENT_TYPE_PRIVATE_MESSAGE (private/mail  event)
@@ -38,7 +48,7 @@
   ;;;
   (let [n (:n (swap! state' update-in [:n] (fnil inc 0)))]
     (debug "feeder-step:" n)
-    (when (<= 50 n)
+    (when (<= 20 n)
       (mlib.thread/clear-loop-flag state'))
     (Thread/sleep 100))
   ;;;

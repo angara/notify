@@ -56,6 +56,11 @@
       (catch Exception ignore default))))
 ;
 
+;; ;; ;; time ;; ;; ;;
+
+(defn now-ms []
+  (System/currentTimeMillis))
+;
 
 ;; ;; ;; edn ;; ;; ;;
 
