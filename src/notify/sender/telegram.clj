@@ -14,6 +14,8 @@
 (def NOTIFY_TEXT_MAX 2000)
 (def NOTIFY_MSG_MAX 3000)
 
+(def TELEGRAM_SEND_DELAY 20)
+
 (defn truncate-text [s]
   (if (>= (.length s) NOTIFY_TEXT_MAX)
     (str (subs s 0 NOTIFY_TEXT_MAX) " ...")
@@ -44,6 +46,7 @@
         chan (-> conf :notify :firehose :channel)
         html (format-event event)]
     (try
+      (Thread/sleep TELEGRAM_SEND_DELAY)
       (send-message cfg chan html)
       (catch Exception ex
         (warn "firehose:" (ex-data ex))))))

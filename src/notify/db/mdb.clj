@@ -12,7 +12,7 @@
 ;
 
 (def USER :user)
-(def NOTIFY_USER_QUEUE :notify_user)
+(def NOTIFY_USER_QUEUE "notify_user")
 
 
 (def WAIT    "wait")
@@ -96,6 +96,16 @@
         :_id (str (ObjectId.)) 
         :inst time-ms
         :status WAIT))))
+;
+
+(defn peek-job [query]
+  (-> (conn)
+    (mq/with-collection (name NOTIFY_USER_QUEUE)
+      (mq/find (assoc query :status WAIT))
+      (mq/sort {:inst 1})
+      (mq/limit 1))
+    (first)
+    (id_id)))
 ;
 
 (defn select-job [query]

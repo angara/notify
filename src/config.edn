@@ -27,6 +27,23 @@
   ;; jdbc:postgresql://dbm:5432/angara?user=angara&password=PASSWORD
   ;; https://github.com/tomekw/hikari-cp/
 
+  :sendmail
+  {
+    :smtp
+    {
+      :host "smtp.yandex.com"
+      :ssl  true
+      :port 465
+      :user "noreply@angara.net"
+      :pass "__PASSWORD__"}
+    ;
+    :envelope
+    {
+      :from "Angara.Net <noreply@angara.net>"
+      :to []
+      :subject ""}}
+  ;
+
   ;; runtime override by build.edn
   :build
   {

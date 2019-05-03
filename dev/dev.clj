@@ -15,6 +15,7 @@
     [notify.const :as const]
     [notify.redis.core :as r]
     [notify.process.inbound :as in]
+    [notify.process.worker :as wr]
 
     [notify.db.sql :as sql]
     [notify.db.mdb :as mdb]
@@ -40,7 +41,7 @@
 (defn restart[]
   (mount/stop)
   (-> 
-    (mount/except [#'in/feeder])
+    (mount/except [#'in/feeder #'wr/queue-worker])
     (mount/with-args (configs))
     (mount/start)))
 ;
@@ -68,9 +69,15 @@
   (mount/only [#'mdb/mdb])
   (mount/only [#'notify.db.sql/ds])
 
+  (mount/stop [#'in/feeder])
   (mount/start [#'in/feeder])
 
+  (mount/stop [#'wr/queue-worker])
+  (mount/start [#'wr/queue-worker])
+
   mdb/mdb
+
+  (mdb/peek-job {})
 
   (mdb/get-user "1")
 

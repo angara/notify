@@ -72,7 +72,13 @@
     (h/where [:= :id id])
     (fetch-one)))
 ;
-    
+
+(defn mail-read? [mail]
+  (:dest_time mail))
+;
+
+;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
+
 (def SELECT_WATCHED_UNREAD
   (->
     (h/select :lr.uid :lr.tid :lr.msgid)
@@ -89,6 +95,28 @@
   (fetch 
     SELECT_WATCHED_UNREAD 
     {:tid (Integer/parseInt topic-id)}))
+;
+
+;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
+
+(def SELECT_USER_UNREAD_TOPIC
+  (->
+    (h/select :tp.tid :tp.title :tp.lastupdate)
+    (h/from [FORUM_LASTREAD :lr])
+    (h/join [FORUM_TOPICS :tp] 
+      [:= :tp.tid :lr.tid])
+    (h/where 
+      [:= :lr.tid :?tid]
+      [:= :lr.uid :?uid]
+      [:> :lr.watch 0]
+      [:> :tp.lastmsgid :lr.msgid])))
+;
+
+(defn user-unread-topic [user-id topic-id]
+  (fetch-one
+    SELECT_USER_UNREAD_TOPIC
+    { :tid (Integer/parseInt topic-id)
+      :uid (Integer/parseInt user-id)}))
 ;
 
 ;;.
