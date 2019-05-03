@@ -1,3 +1,4 @@
+
 (ns notify.process.inbound
   (:require
     [clojure.stacktrace :refer [print-stack-trace]]
@@ -32,6 +33,7 @@
     (update-in event [:private_message :text] hide-text))
 
   (let [msg (:private_message event)]
+    (debug "private-message: msg" msg)
     (new-job 
       (now-ms)
       { :type EVENT_TYPE_PRIVATE_MESSAGE
@@ -56,15 +58,14 @@
 ;
 
 (defn forum-topic [event]
-  (debug "forum/topic:" event)
+  (debug "forum-topic:" (dissoc (:forum_topic event) :text))
   (firehose event))
 ;
 
 (defn forum-moder [event]
-  (debug "forum/moder:" event)
+  (debug "forum-moder:" event)
   (firehose event))
 ;
-
 
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
@@ -78,18 +79,19 @@
 ;
 
 (defn dispatch [event]
-  (condp = (:type event)
-    C/EVENT_TYPE_FORUM_MSG       (-> event fixup-forum-msg forum/message)
-    ;;
-    C/EVENT_TYPE_FORUM_MESSAGE   (forum-message event)
-    C/EVENT_TYPE_FORUM_TOPIC     (forum-topic   event)
-    C/EVENT_TYPE_FORUM_MODER     (forum-moder   event)
-    C/EVENT_TYPE_PRIVATE_MESSAGE (private-message event)
-    C/EVENT_TYPE_USER_REGISTER   (user/register event)
-    C/EVENT_TYPE_USER_LOGIN      (user/login    event)
-    (do 
-      (warn "unexpected event:" event)
-      (firehose event))))
+  (when event
+    (condp = (:type event)
+      C/EVENT_TYPE_FORUM_MSG       (-> event fixup-forum-msg forum-message)
+      ;;
+      C/EVENT_TYPE_FORUM_MESSAGE   (forum-message event)
+      C/EVENT_TYPE_FORUM_TOPIC     (forum-topic   event)
+      C/EVENT_TYPE_FORUM_MODER     (forum-moder   event)
+      C/EVENT_TYPE_PRIVATE_MESSAGE (private-message event)
+      C/EVENT_TYPE_USER_REGISTER   (user/register event)
+      C/EVENT_TYPE_USER_LOGIN      (user/login    event)
+      (do 
+        (warn "unexpected event:" event)
+        (firehose event)))))
 ;
 
 (defn feeder-init [state']
@@ -99,13 +101,6 @@
 ;
 
 (defn feeder-step [state']
-  ;;;
-  (let [n (:n (swap! state' update-in [:n] (fnil inc 0)))]
-    (debug "feeder-step:" n)
-    (when (<= 200 n)
-      (mlib.thread/clear-loop-flag state'))
-    (Thread/sleep 100))
-  ;;;
   (->
     (:redis @state')
     (fetch-event)

@@ -1,20 +1,17 @@
 
 (ns notify.sender.telegram
   (:require
-    ; [clojure.string :refer [subs]]
     [cheshire.core :refer [generate-string]]
     ;
     [mlib.config :refer [conf]]
     [mlib.logger :refer [debug info warn]]
     [mlib.tgapi :refer [esc send-message]]
     ;
-    [notify.const :as C]))
+    [notify.const :refer [EVENT_TYPE_FORUM_MESSAGE]]))
 ;
 
 (def NOTIFY_TEXT_MAX 2000)
 (def NOTIFY_MSG_MAX 3000)
-
-(def TELEGRAM_SEND_DELAY 20)
 
 (defn truncate-text [s]
   (if (>= (.length s) NOTIFY_TEXT_MAX)
@@ -23,19 +20,25 @@
 ;
 
 (defn format-event [event]
-  (let [type (:type event)
-        body ((keyword type) event)
-        uid  (:user_id body)
-        eid  (str "<pre>eid:" (:eid event) "</pre>")
-        hdr  (str "<b>" type "</b>" " 🔹 user:" uid "\n")
+  (let [type  (:type event)
+        body  ((keyword type) event)
+        uid   (:user_id body)
+        eid   (str "<pre>eid:" (:eid event) "</pre>")
+        hdr   (str "<b>" type "</b>" " 🔹 user:" uid "\n")
+        topic (when (= type EVENT_TYPE_FORUM_MESSAGE)
+                (str "https://angara.net/forum/t" (:topic_id body) "#" (:msg_id body)))
         title (esc (str (:title body)))
-        text (esc (truncate-text (str (:text body))))
-        attr (dissoc body :text :user_id :title)
-        attr (esc (generate-string attr :pretty))]
-    (if (< NOTIFY_MSG_MAX (+ (.length title) (.length text) (.length attr)))
+        text  (esc (truncate-text (str (:text body))))
+        attr  (dissoc body :text :user_id :title :topic_id :msg_id)
+        attr  (when-not (empty? attr)
+                (esc (generate-string attr :pretty)))]
+    (if (< NOTIFY_MSG_MAX (+ (.length title) (.length text)))
       (str hdr "\n<b>Very long message truncated!</b>" eid)
       (str hdr 
-        "<pre>" attr "</pre>\n\n" 
+        topic "\n"
+        (when attr
+          (str "<pre>" attr "</pre>\n")) 
+        "\n"
         (when (< 0 (.length title))
           (str "🔸 <b>" title "</b>\n"))
         text "\n\n" eid))))
@@ -46,10 +49,13 @@
         chan (-> conf :notify :firehose :channel)
         html (format-event event)]
     (try
-      (Thread/sleep TELEGRAM_SEND_DELAY)
       (send-message cfg chan html)
       (catch Exception ex
-        (warn "firehose:" (ex-data ex))))))
+        (warn "firehose: catch" (ex-data ex))))))
 ;
 
 ;;.
+
+(comment
+  (format-event {:type "forum_message" :title "title" :text "text"})
+  .)

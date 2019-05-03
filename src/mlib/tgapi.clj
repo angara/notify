@@ -56,7 +56,8 @@
             res))
         ;;
         (throw
-          (ex-info (str "tgapi - retry limit reached: " rmax) {}))))))
+          (ex-info (str "tgapi - retry limit reached: " rmax) 
+            {:message (str "tgapi - retry limit reached: " rmax)}))))))
 ;
 
 (defn send-message [cfg chat text]

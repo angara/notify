@@ -1,10 +1,10 @@
 
 (ns notify.srv
   (:require
-    [mount.core :refer [defstate]]
-    [mlib.config :refer [conf]]
-    [mlib.logger :refer [debug info warn]]
-    [notify.redis.core :refer [connect]]
+    ; [mount.core :refer [defstate]]
+    ; [mlib.config :refer [conf]]
+    ; [mlib.logger :refer [debug info warn]]
+    ; [notify.redis.core :refer [connect]]
     [notify.process.inbound :refer [feeder]]
     [notify.process.worker :refer [queue-worker]]))
 ;

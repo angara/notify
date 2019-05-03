@@ -7,7 +7,7 @@
     [mlib.config :refer [conf]]
     [mlib.logger :refer [debug info warn]]
     [mlib.thread :refer [start-loop stop-loop]]
-    [mlib.util :refer [now-ms]]
+    [mlib.util :refer [now-ms to-int]]
     ;
     [notify.const :refer 
       [ EVENT_TYPE_FORUM_MESSAGE 
@@ -31,7 +31,7 @@
         subject (str "Angara.Net: Личное сообщение")
         text (str 
                 "Cообщение от пользователя: " (:username from-user) "\n\n"
-                "- - -\n" (:text mail) "\n- - -\n\n"
+                "- - -\n" (:body mail) "\n- - -\n\n"
                 "https://angara.net/mail/\n\n")]
     ;
     (send-mail email subject text)))
@@ -42,9 +42,9 @@
         subject (str "Angara.Net/forum: " (:title topic))
         text (str 
                 "Новое сообщение в теме:\n\n" (:title topic) "\n\n"
-                "https://angara.net/forum/t" (:tid topic) "?unread\n\n")]))
+                "https://angara.net/forum/t" (:tid topic) "?unread\n\n")]
 
-    ;;; (send-mail email subject text)))
+    (send-mail email subject text)))
 ;
 
 (defn forum-message [{user-id :user_id topic-id :topic_id :as job}]
@@ -60,10 +60,7 @@
 ;
 
 (defn private-message [{user-id :user_id from-id :from_id mail-id :mail_id :as job}]
-  (debug "private-message:" job)
-  (debug "private-message: mail" (get-mail mail-id))
-
-  (if-let [mail (get-mail mail-id)]
+  (if-let [mail (get-mail (to-int mail-id))]
     (when-not (mail-read? mail)
       (if (user-online? user-id USER_ONLINE_INTERVAL)
         (new-job
@@ -74,7 +71,7 @@
               from (get-user from-id)]
           (send-private-notify user from mail))))
     ;;
-    (warn "provate-message: mail message missing" mail-id)))
+    (warn "private-message: mail message missing" mail-id)))
 ;
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
@@ -102,14 +99,6 @@
 ;
 
 (defn worker-step [state']
-  ;;; ;;; ;;;
-  ; (let [n (:n (swap! state' update-in [:n] (fnil inc 0)))]
-  ;   (debug "worker-step:" n)
-  ;   ; (when (<= 2 n)
-  ;   ;   (mlib.thread/clear-loop-flag state'))
-  ;   (Thread/sleep 100))
-  ;;; ;;; ;;;
-
   (if-let [job (select-job {})]
     (do-job job)
     (let [next-job (peek-job {})
@@ -129,4 +118,3 @@
 ;
   
 ;;.
-  
