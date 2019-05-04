@@ -6,7 +6,8 @@
     [monger.query :as mq]
     [mount.core :refer [defstate]]
     [mlib.mongo :refer [connect disconnect id_id]]
-    [mlib.config :refer [conf]])
+    [mlib.config :refer [conf]]
+    [mlib.util :refer [now-ms]])
   (:import 
     org.bson.types.ObjectId))  
 ;
@@ -94,6 +95,7 @@
     (mc/insert-and-return (conn) NOTIFY_USER_QUEUE
       (assoc job-data
         :_id (str (ObjectId.)) 
+        :ct (now-ms)
         :inst time-ms
         :status WAIT))))
 ;
@@ -112,7 +114,7 @@
   (id_id
     (mc/find-and-modify (conn) NOTIFY_USER_QUEUE
       (assoc query :status WAIT)
-      {:$set {:status PROCESS}}
+      {:$set {:status PROCESS :ts (now-ms)}}
       {:sort {:inst 1} :return-new true})))
 ;
 
