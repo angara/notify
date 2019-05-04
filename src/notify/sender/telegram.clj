@@ -34,8 +34,10 @@
                 (esc (generate-string attr :pretty)))]
     (if (< NOTIFY_MSG_MAX (+ (.length title) (.length text)))
       (str hdr "\n<b>Very long message truncated!</b>" eid)
+      ;;
       (str hdr 
-        topic "\n"
+        (when topic
+          (str topic "\n"))
         (when attr
           (str "<pre>" attr "</pre>\n")) 
         "\n"
@@ -51,7 +53,7 @@
     (try
       (send-message cfg chan html)
       (catch Exception ex
-        (warn "firehose: catch" (ex-data ex))))))
+        (warn "firehose: catch" ex)))))
 ;
 
 ;;.

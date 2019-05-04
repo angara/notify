@@ -19,7 +19,9 @@
     honeysql                  {:mvn/version "0.9.4"}  
 
     com.draines/postal        {:mvn/version "2.0.3"}
-    mount                     {:mvn/version "0.1.16"}}
+    mount                     {:mvn/version "0.1.16"}
+
+    ch.qos.logback/logback-classic {:mvn/version "1.2.3"}}
   ;
 
   :aliases
@@ -55,10 +57,10 @@
       :main-opts 
         ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
     
-    :jar
+    :uberjar
     {
-      ; :extra-paths ["resources" "tmp/classes"]
-      :extra-paths ["resources"]
+      :extra-paths ["resources" "tmp/classes"]
+      ;; :extra-paths ["resources"]
       :extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
       :main-opts ["-m" "hf.depstar.uberjar" "tmp/notify.jar"]}
     
@@ -74,18 +76,25 @@
           "mach.pack.alpha.capsule tmp/notify.jar"
           "--application-id anga.notify"
           "--application-version 0.0.3" 
-          "--main app.main"]}
+          "--main app.main"]}}
 
-    :cambada
-    { 
-      :extra-deps { luchiniatwork/cambada {:mvn/version "1.0.0"}}
-      :main-opts ["-m" "cambada.uberjar" 
-                  "--main app.main"
-                  "--app-version" "0.0.1"
-                  "--out out"
-                  "--no-copy-source"]}
+    ; :cambada
+    ; { 
+    ;   :extra-deps {cambada/cambada {:mvn/version "1.0.4"}}
+    ;   :main-opts ["-m" "cambada.uberjar" 
+    ;               "--main notify.main"
+    ;               "--app-version" "1.0.0"]}}
+    ;               ;; "--out tmp"
+    ;               ;; "--no-copy-source"]}}
 
-    :. :.}}
+  ;; workaround cambada's "ArtifactDescriptorException"
+  :mvn/repos 
+  {
+    "central" {:url "https://repo1.maven.org/maven2/"}
+    ; "central" {:url "https://repo.maven.apache.org/maven2/"}
+    "clojars" {:url "https://clojars.org/repo"}}
+ 
+  :. :.}
 
 ;; https://github.com/luchiniatwork/cambada
 ;; https://github.com/seancorfield/depstar

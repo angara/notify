@@ -51,6 +51,9 @@
     (<!!             (::thread thread-state))))
 ;
 
+(defn join [thread-state]
+  (<!! (::thread thread-state)))
+;
 
 (comment
 

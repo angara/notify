@@ -33,7 +33,6 @@
     (update-in event [:private_message :text] hide-text))
 
   (let [msg (:private_message event)]
-    (debug "private-message: msg" msg)
     (new-job 
       (now-ms)
       { :type EVENT_TYPE_PRIVATE_MESSAGE
