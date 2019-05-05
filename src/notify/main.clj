@@ -3,7 +3,7 @@
   (:gen-class)
   (:require
     [clojure.string :refer [blank? split]]
-    [mount.core     :refer [start-with-args]]
+    [mount.core     :refer [defstate start-with-args]]
     ;;
     [mlib.config    :refer [conf]]
     [mlib.util      :refer [edn-read edn-resource]]
@@ -21,14 +21,19 @@
       (map edn-read))))
 ;
 
+(defstate app-start
+  :start
+    (info "started:" (:build conf)))
+;
+
 (defn -main [& argv]
-  (info "main start")
+  (info "init...")
   (start-with-args 
     (concat
       [(edn-resource "config.edn") {:build (edn-resource "build.edn")}]
       (load-env-configs (System/getenv "CONFIG_EDN"))))
   ;;
-  (info "main end:" 
+  (info "stop..." 
     (join queue-worker)))
 ;
 
