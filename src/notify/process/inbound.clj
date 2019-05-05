@@ -10,7 +10,8 @@
     [mlib.util :refer [now-ms]]
     ;
     [notify.const :as C :refer 
-      [ EVENT_TYPE_PRIVATE_MESSAGE
+      [ REDIS_RECONNECT_DELAY
+        EVENT_TYPE_PRIVATE_MESSAGE
         EVENT_TYPE_FORUM_MESSAGE
         USER_ONLINE_INTERVAL 
         ONLINE_USER_NOTIFY_DELAY_MS]]
@@ -66,7 +67,6 @@
   (firehose event))
 ;
 
-
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
 (defn- fixup-forum-msg [event]
@@ -93,17 +93,41 @@
         (firehose event)))))
 ;
 
+
+(defn reconnect-redis [state']
+  (try
+    (when-let [r (:redis @state')]
+      (swap! state' assoc :redis nil)
+      (.close r))
+    (let [redis (connect (-> conf :redis :url))]
+      (swap! state' assoc :redis redis)
+      redis)
+    (catch Exception ex
+      (warn "reconnect-redis: catch" (.getMessage ex)))))
+;
+
 (defn feeder-init [state']
   (debug "feeder-init")
-  (let [redis (connect (-> conf :redis :url))]
-    (swap! state' assoc :redis redis)))
+  (when-not (reconnect-redis state')
+    (throw (ex-info "redis connection failed" {}))))
+;
+
+(defn try-fetch-event [state']
+  (try
+    (fetch-event (:redis @state'))
+    (catch Exception ex
+      (warn "try-fetch-event:" (.getMessage ex))
+      (Thread/sleep REDIS_RECONNECT_DELAY)
+      (reconnect-redis state')
+      nil)))
 ;
 
 (defn feeder-step [state']
-  (->
-    (:redis @state')
-    (fetch-event)
-    (dispatch)))
+  (try
+    (when-let [event (try-fetch-event state')]
+      (dispatch event))
+    (catch Exception ex
+      (warn "feeder-step:" (.getMessage ex)))))
 ;
 
 (defn feeder-cleanup [state ex]

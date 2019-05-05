@@ -47,13 +47,13 @@
 ;
 
 (defn firehose [event]
-  (let [cfg  (-> conf :notify :telegram)
-        chan (-> conf :notify :firehose :channel)
-        html (format-event event)]
-    (try
-      (send-message cfg chan html)
-      (catch Exception ex
-        (warn "firehose: catch" ex)))))
+  (try
+    (let [cfg  (-> conf :notify :telegram)
+          chan (-> conf :notify :firehose :channel)
+          html (format-event event)]
+      (send-message cfg chan html))
+    (catch Exception ex
+      (warn "firehose:" (.getMessage ex) (ex-data ex)))))
 ;
 
 ;;.

@@ -4,6 +4,10 @@
   
 ;; global constants
 
+(def REDIS_CONNECT_TIMEOUT 5000)
+(def REDIS_RECONNECT_DELAY 5000)
+(def WORKER_RETRY_DELAY    5000)
+
 ;; redis keys:
 
 (def EVENT_QUEUE      "event_queue")

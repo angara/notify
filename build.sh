@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export APPNAME='notify'
-export VERSION='1.0.6'
+export VERSION='1.1.0'
 export COMMIT=`git rev-parse HEAD`
 export TIMESTAMP=`date -Isec`
 

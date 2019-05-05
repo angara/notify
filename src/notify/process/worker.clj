@@ -10,7 +10,8 @@
     [mlib.util :refer [now-ms to-int]]
     ;
     [notify.const :refer 
-      [ EVENT_TYPE_FORUM_MESSAGE 
+      [ WORKER_RETRY_DELAY
+        EVENT_TYPE_FORUM_MESSAGE 
         EVENT_TYPE_PRIVATE_MESSAGE
         USER_ONLINE_INTERVAL 
         ONLINE_USER_NOTIFY_DELAY_MS]]
@@ -86,7 +87,7 @@
       (do
         (warn "do-job: unexpected type" job)))
     (catch Exception ex
-      (warn "do-job failed:" job ex))
+      (warn "do-job failed:" job (.getMessage ex)))
     (finally
       (finish-job (:id job)))))
 ;
@@ -99,11 +100,15 @@
 ;
 
 (defn worker-step [state']
-  (if-let [job (select-job {})]
-    (do-job job)
-    (let [next-job (peek-job {})
-          sleep (- (now-ms) (or (:inst next-job) 0))]
-      (Thread/sleep (min WORKER_SLEEP_MS (max 0 sleep))))))
+  (try
+    (if-let [job (select-job {})]
+      (do-job job)
+      (let [next-job (peek-job {})
+            sleep (- (now-ms) (or (:inst next-job) 0))]
+        (Thread/sleep (min WORKER_SLEEP_MS (max 0 sleep)))))
+    (catch Exception ex
+      (warn "worker-step:" (.getMessage ex))
+      (Thread/sleep WORKER_RETRY_DELAY))))
 ;
 
 (defn worker-cleanup [state ex]

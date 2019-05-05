@@ -26,14 +26,13 @@
 
 (defn configs []
   [ (edn-resource "config.edn")
-    (edn-read "tmp/dev.edn")])
+    (edn-read "../conf/dev.edn")])
 ;
 
 (defn start-conf[]
   (mount/stop)
   (-> 
     (mount/only [#'conf])
-    ; (mount/except [#'foo/c]
     (mount/with-args (configs))
     (mount/start)))
 ;
@@ -41,16 +40,28 @@
 (defn restart[]
   (mount/stop)
   (-> 
-    (mount/except [#'in/feeder #'wr/queue-worker])
+    ; (mount/except [#'in/feeder #'wr/queue-worker])
     (mount/with-args (configs))
     (mount/start)))
 ;
 
-; (def R (r/connect (-> conf :redis :url)))
+(defn emit-event [type data]
+  (let [R (r/connect (-> conf :redis :url))]
+    (r/send-event R type data)))
+;
 
 
 (comment
   (restart)
+
+  (emit-event
+    const/EVENT_TYPE_FORUM_TOPIC
+    {:group_id "10" :topic_id "123"})    
+
+  (emit-event
+    const/EVENT_TYPE_PRIVATE_MESSAGE
+    {:id "10" :user_id "1" :to_id "1"})    
+      
 
   (sql/get-mail 1012)
 
