@@ -4,10 +4,9 @@
   (:require
     [clojure.java.io :as io]
     [clojure.string :refer [blank? split trim]]
-    [mount.core     :refer [defstate start-with-args]]
+    [mount.core     :refer [start-with-args]]
     [taoensso.timbre  :refer [debug info warn] :as timbre]
     ;;
-    ;; [mlib.config    :refer [conf]]
     [mlib.util      :refer [edn-read]]
     [mlib.thread    :refer [join]]
     ;;
@@ -25,12 +24,7 @@
     (->> (split env #"\:")
       (remove blank?)
       (map edn-read))))
-;
 
-(defstate app-start
-  :start
-    (info "started."))
-;
 
 (defn -main [& _]
   
