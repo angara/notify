@@ -17,6 +17,6 @@
                   :body text}))]
     ;
     (if (-> rc :error (= :SUCCESS))
-      (info "send-mail:" to subj)
-      (warn "send-mail:" to rc))))
+      (info "send-mail.ok:" to subj)
+      (warn "send-mail.failed:" to rc))))
 ;
