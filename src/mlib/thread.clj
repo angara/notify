@@ -59,29 +59,29 @@
 
   ;; example
 
-  (defn init [state']
-    (update state' assoc :conn (make-connection cfg)))
-  ;
+  ;; (defn init [state']
+  ;;   (update state' assoc :conn (make-connection cfg)))
+  ;; ;
 
-  (defn step [state']
-    (println
-      (read (:conn @state'))))
-  ;
+  ;; (defn step [state']
+  ;;   (println
+  ;;     (read (:conn @state'))))
+  ;; ;
 
-  (defn cleanup [state ex]
-    (when ex
-      (error ex))
-    (when-let [conn (:conn state)]
-      (close conn)))
-  ;
+  ;; (defn cleanup [state ex]
+  ;;   (when ex
+  ;;     (error ex))
+  ;;   (when-let [conn (:conn state)]
+  ;;     (close conn)))
+  ;; ;
 
-  (defstate service
-    :start
-      (start-loop init step cleanup)
-    :stop
-      (stop-loop service))
-  ;
+  ;; (defstate service
+  ;;   :start
+  ;;     (start-loop init step cleanup)
+  ;;   :stop
+  ;;     (stop-loop service))
+  ;; ;
 
-  .)
+  ,)
 
 ;;.

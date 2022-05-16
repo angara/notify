@@ -2,17 +2,23 @@
 (ns notify.main
   (:gen-class)
   (:require
-    [clojure.string :refer [blank? split]]
+    [clojure.java.io :as io]
+    [clojure.string :refer [blank? split trim]]
     [mount.core     :refer [defstate start-with-args]]
+    [taoensso.timbre  :refer [debug info warn] :as timbre]
     ;;
-    [mlib.config    :refer [conf]]
-    [mlib.util      :refer [edn-read edn-resource]]
-    [mlib.logger    :refer [info debug]]
+    ;; [mlib.config    :refer [conf]]
+    [mlib.util      :refer [edn-read]]
     [mlib.thread    :refer [join]]
     ;;
-    [notify.process.inbound :refer [feeder]]
-    [notify.process.worker :refer [queue-worker]]))
-;
+    [notify.process.inbound]
+    [notify.process.worker :refer [queue-worker]]
+  ))
+
+
+(def build-info
+  (delay (-> "build-info" (io/resource) (slurp) (trim))))
+
   
 (defn load-env-configs [env]
   (when env
@@ -23,18 +29,21 @@
 
 (defstate app-start
   :start
-    (info "started:" (:build conf)))
+    (info "started."))
 ;
 
-(defn -main [& argv]
-  (info "init...")
-  (start-with-args 
-    (concat
-      [(edn-resource "config.edn") {:build (edn-resource "build.edn")}]
-      (load-env-configs (System/getenv "CONFIG_EDN"))))
+(defn -main [& _]
+  
+  (timbre/merge-config!
+     {:output-fn  (partial timbre/default-output-fn {:stacktrace-fonts {}})
+      :min-level  [[#{"notify.*"} :debug]
+                   [#{"*"} :info]]})
+  
+  (info (str "init: " @build-info))
+
+  (start-with-args
+    (load-env-configs (System/getenv "CONFIG_EDN")))
   ;;
   (info "stop..." 
     (join queue-worker)))
 ;
-
-;;.

@@ -1,7 +1,7 @@
 
 (ns notify.process.user
   (:require
-    [mlib.logger :refer [debug info warn]]
+    [taoensso.timbre  :refer [debug info warn]]
     ;
     [notify.sender.telegram :refer [firehose]]))
 ;
@@ -15,5 +15,3 @@
   (debug "user/login:" event)
   (firehose event))
 ;
-
-;;.

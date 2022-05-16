@@ -34,10 +34,11 @@
     :inst "<int> action timestamp"
     :state #{WAIT PROCESS}    ;; ?DONE ?FAIL
     ;
-    :user_id "uid"
-    :type  #{private_message forum_message forum_topic}
-    :other values};
-  .)
+    ;; :user_id "uid"
+    ;; :type  #{private_message forum_message forum_topic}
+    ;; :other values;
+    }
+  ,)
 ;
 
 (defn indexes [conn]
@@ -86,7 +87,7 @@
         :atime {:$gte atime}}
       [:_id :atime]))
 
-  .)
+  ,)
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
@@ -102,6 +103,7 @@
 
 (defn peek-job [query]
   (-> (conn)
+    #_{:clj-kondo/ignore [:invalid-arity]}
     (mq/with-collection (name NOTIFY_USER_QUEUE)
       (mq/find (assoc query :status WAIT))
       (mq/sort {:inst 1})
@@ -121,5 +123,3 @@
 (defn finish-job [id]
   (mc/remove-by-id (conn) NOTIFY_USER_QUEUE id))
 ;
-
-;;.

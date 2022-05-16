@@ -1,11 +1,10 @@
 
 (ns notify.process.inbound
   (:require
-    [clojure.stacktrace :refer [print-stack-trace]]
     [mount.core :refer [defstate]]
     ;
     [mlib.config :refer [conf]]
-    [mlib.logger :refer [debug info warn]]
+    [taoensso.timbre  :refer [debug info warn]]
     [mlib.thread :refer [start-loop stop-loop]]
     [mlib.util :refer [now-ms]]
     ;
@@ -140,5 +139,3 @@
   :stop
     (stop-loop feeder))
 ;
-
-;;.

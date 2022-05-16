@@ -52,18 +52,11 @@
 /tmp/
 /node_modules/
 
-# explicit versions in package.json
-/package-lock.json
-
 ## allow 
 !.gitignore
 !.dockerignore
 !.eslint*
 !.npmingore
 !yarn.lock
-
-# vscode java
-!.classpath
-!.project
 
 #.

@@ -1,11 +1,11 @@
 
 (ns notify.process.worker
   (:require
-    [monger.collection :as mc]
+    ; [monger.collection :as mc]
     [mount.core :refer [defstate]]
+    [taoensso.timbre  :refer [debug info warn]]
     ;
-    [mlib.config :refer [conf]]
-    [mlib.logger :refer [debug info warn]]
+    ; [mlib.config :refer [conf]]
     [mlib.thread :refer [start-loop stop-loop]]
     [mlib.util :refer [now-ms to-int]]
     ;

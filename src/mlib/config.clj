@@ -39,7 +39,7 @@
   ($subst 123 subst)   ;; 123 
   ($subst :a subst)    ;; :a
 
-  .)
+  ,)
 ;
 
 (defstate conf

@@ -2,10 +2,9 @@
 (ns notify.sender.email
   (:require
     [postal.core :refer [send-message]]    
-    ;
-    [mlib.logger :refer [debug info warn]]
-    [mlib.config :refer [conf]]))
-;
+    [taoensso.timbre  :refer [debug info warn]]
+    [mlib.config :refer [conf]]
+  ))
 
 (defn send-mail [to subj text]
   (let [smtp      (-> conf :sendmail :smtp)
@@ -21,5 +20,3 @@
       (info "send-mail:" to subj)
       (warn "send-mail:" to rc))))
 ;
-
-;;.

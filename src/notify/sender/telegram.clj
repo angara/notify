@@ -2,9 +2,9 @@
 (ns notify.sender.telegram
   (:require
     [cheshire.core :refer [generate-string]]
+    [taoensso.timbre  :refer [debug info warn]]
     ;
     [mlib.config :refer [conf]]
-    [mlib.logger :refer [debug info warn]]
     [mlib.tgapi :refer [esc send-message]]
     ;
     [notify.const :refer [EVENT_TYPE_FORUM_MESSAGE]]))
@@ -60,4 +60,4 @@
 
 (comment
   (format-event {:type "forum_message" :title "title" :text "text"})
-  .)
+  ,)

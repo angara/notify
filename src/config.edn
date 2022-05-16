@@ -43,14 +43,8 @@
       :to []
       :subject ""}}
   ;
-
-  ;; runtime override by build.edn
-  :build
-  {
-    :appname    "notify-DEV"
-    :version    "0.0-DEV"
-    :commit     "xxxxxxxx-DEV"
-    :timestamp  "2019-DEV"}}
+  
+  }
 ;;.
   
 
