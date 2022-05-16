@@ -39,7 +39,7 @@
       :min-level  [[#{"notify.*"} :debug]
                    [#{"*"} :info]]})
   
-  (info (str "init: " @build-info))
+  (info (str "start: " @build-info))
 
   (start-with-args
     (load-env-configs (System/getenv "CONFIG_EDN")))

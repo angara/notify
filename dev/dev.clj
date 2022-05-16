@@ -95,10 +95,10 @@
   (start-conf)
   (restart)
 
-  (first
-    (mc/find (:db mdb/mdb) :user {:_id "1"}))
+  ;; (first
+  ;;   (mc/find (:db mdb/mdb) :user {:_id "1"}))
 
-  (mc/find-map-by-id (:db mdb/mdb) :user "1")
+  ;; (mc/find-map-by-id (:db mdb/mdb) :user "1")
 
   mlib.sql.core/ds*
 
@@ -122,10 +122,8 @@
       (in/dispatch)))
 ;
 
-  .)
+  ,)
 ;
 
 ;;   "https://github.com/ztellman/manifold"
-
-;;.
 
