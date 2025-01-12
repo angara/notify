@@ -1,18 +1,17 @@
-
 (ns notify.db.mdb
   (:require
-    [java-time :as time]
+    [java-time.api :as jt]
     [monger.collection :as mc]
     [monger.query :as mq]
     [mount.core :refer [defstate]]
     [mlib.mongo :refer [connect disconnect id_id]]
-    [mlib.config :refer [conf]]
+    [notify.config :refer [conf]]
     [mlib.util :refer [now-ms]])
   (:import 
     org.bson.types.ObjectId))  
-;
 
-(def USER :user)
+
+(def USER "user")
 (def NOTIFY_USER_QUEUE "notify_user")
 
 
@@ -39,7 +38,7 @@
     ;; :other values;
     }
   ,)
-;
+
 
 (defn indexes [conn]
   (let [db (:db conn)]
@@ -48,40 +47,36 @@
     ; (mc/create-index db NOTIFY_USER_QUEUE (array-map :user_id 1 :time 1)))
     ;
   conn)
-;
+
 
 (defstate mdb
   :start
-    (-> conf
-      (get-in [:mdb-angara :url])
-      (connect)
-      (indexes))
+    (-> conf (:mdb-angara) (:url) (connect) (indexes))
   :stop
     (disconnect mdb))
-;
+
 
 (defn conn []
   (:db mdb))
-;
+
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
 (defn get-user [id]
   (mc/find-map-by-id (conn) USER id))
-;  
+  
 
 (defn user-online? [id active-duration]
-  (let [atime (time/minus (time/local-date-time) active-duration)]
+  (let [atime (jt/minus (jt/local-date-time) active-duration)]
     (mc/find-one-as-map (conn) USER 
       { :_id id 
         :atime {:$gte atime}}
       [:_id :atime])))
-;  
 
 
 (comment
 
-  (let [atime (time/minus (time/local-date-time) (time/seconds 100))]
+  (let [atime (jt/minus (jt/local-date-time) (jt/seconds 100))]
     (mc/find-one-as-map (conn) USER 
       { :_id "1"
         :atime {:$gte atime}}
@@ -99,7 +94,7 @@
         :ct (now-ms)
         :inst time-ms
         :status WAIT))))
-;
+
 
 (defn peek-job [query]
   (-> (conn)
@@ -110,7 +105,7 @@
       (mq/limit 1))
     (first)
     (id_id)))
-;
+
 
 (defn select-job [query]
   (id_id
@@ -118,8 +113,8 @@
       (assoc query :status WAIT)
       {:$set {:status PROCESS :ts (now-ms)}}
       {:sort {:inst 1} :return-new true})))
-;
+
 
 (defn finish-job [id]
   (mc/remove-by-id (conn) NOTIFY_USER_QUEUE id))
-;
+

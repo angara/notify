@@ -1,23 +1,22 @@
-
 (ns notify.sender.telegram
   (:require
-    [cheshire.core :refer [generate-string]]
-    [taoensso.timbre  :refer [debug info warn]]
-    ;
-    [mlib.config :refer [conf]]
-    [mlib.tgapi :refer [esc send-message]]
-    ;
-    [notify.const :refer [EVENT_TYPE_FORUM_MESSAGE]]))
-;
+   [taoensso.telemere :refer [log!]]
+   [mlib.tgapi :refer [esc send-message]]
+   [notify.const :refer [EVENT_TYPE_FORUM_MESSAGE]]
+   [clojure.pprint :refer [pprint]]
+   [notify.config :refer [conf]]
+   ,))
+
 
 (def NOTIFY_TEXT_MAX 2000)
 (def NOTIFY_MSG_MAX 3000)
+
 
 (defn truncate-text [s]
   (if (>= (.length s) NOTIFY_TEXT_MAX)
     (str (subs s 0 NOTIFY_TEXT_MAX) " ...")
     s))
-;
+
 
 (defn format-event [event]
   (let [type  (:type event)
@@ -31,7 +30,8 @@
         text  (esc (truncate-text (str (:text body))))
         attr  (dissoc body :text :user_id :title :topic_id :msg_id)
         attr  (when-not (empty? attr)
-                (esc (generate-string attr :pretty)))]
+                (esc (with-out-str (pprint attr))))
+        ,]
     (if (< NOTIFY_MSG_MAX (+ (.length title) (.length text)))
       (str hdr "\n<b>Very long message truncated!</b>" eid)
       ;;
@@ -53,10 +53,8 @@
           html (format-event event)]
       (send-message cfg chan html))
     (catch Exception ex
-      (warn "firehose:" (.getMessage ex) (ex-data ex)))))
-;
+      (log! ["firehose:" ex (ex-data ex)]))))
 
-;;.
 
 (comment
   (format-event {:type "forum_message" :title "title" :text "text"})

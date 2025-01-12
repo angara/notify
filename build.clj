@@ -1,46 +1,90 @@
 (ns build
+  (:import
+   [java.time LocalDateTime]
+   [java.time.format DateTimeFormatter])
   (:require 
-    [clojure.string :refer [trim-newline]]
     [clojure.java.io :as io]
     [clojure.tools.build.api :as b]
-    [org.corfield.build :as bb]
   ))
 
 
-(def APPLICATION 'angara/notify)
-(def VER_MAJOR 1)
-(def VER_MINOR 1)
-(def MAIN_CLASS 'notify.main)
+(def APP_NAME   (System/getenv "APP_NAME"))
+(def VER_MAJOR  (System/getenv "VER_MAJOR"))
+(def VER_MINOR  (System/getenv "VER_MINOR"))
+(def MAIN_CLASS (System/getenv "MAIN_CLASS"))
 
+(def JAR_NAME   (System/getenv "JAR_NAME"))
 
-(def TARGET "./target")
-(def RESOURCES "./resourses")
+(def JAVA_SRC         "./java")
+(def RESOURCES        "./resources")
+(def TARGET           "./target")
+(def CLASS_DIR        "./target/classes")
 (def TARGET_RESOURCES "./target/resources")
-(def VERSION_FILE "./VERSION")
+
+(def BUILD_INFO "build-info.edn")
 
 
-(defn save-build-info [app-ver]
-  (let [bi-file (io/file TARGET_RESOURCES "build-info")]
-    (io/make-parents bi-file)  
-    (spit bi-file app-ver)
-  ))
+(defn iso-now ^String []
+  (.format (LocalDateTime/now) DateTimeFormatter/ISO_LOCAL_DATE_TIME))
 
 
-(defn version [] 
+(defn clean [_]
+  (b/delete {:path TARGET}))
+
+
+(defn version [_]
   (format "%s.%s.%s" VER_MAJOR VER_MINOR (b/git-count-revs nil)))
 
 
-(defn print-version [& _args]
-  (println (version)))
+(defn build-info [_]
+  {:appname APP_NAME
+   :version (version nil)
+   :branch (b/git-process {:git-args "branch --show-current"})
+   :commit (b/git-process {:git-args "rev-parse --short HEAD"})
+   :timestamp (iso-now)})
 
 
-(defn uberjar [& _args]
-  (let [VERSION   (trim-newline (slurp VERSION_FILE))
-        UBER_FILE (format "%s/%s.jar" TARGET (name APPLICATION))
-        app-ver   (str (name APPLICATION) " v" VERSION)
-        ]
-    (save-build-info app-ver)
-    (-> {:lib APPLICATION :version VERSION :main MAIN_CLASS :uber-file UBER_FILE 
-         :resource-dirs [RESOURCES TARGET_RESOURCES]}
-      (bb/uber))
-  ))
+(defn write-build-info [build-info]
+  (let [out-file (io/file CLASS_DIR BUILD_INFO)]
+    (io/make-parents out-file)
+    (spit out-file (pr-str build-info))))
+
+
+;; https://clojure.org/guides/tools_build
+;;
+(defn javac [{basis :basis}]
+  (b/javac {:src-dirs [JAVA_SRC]
+            :class-dir CLASS_DIR
+            :basis (or basis (b/create-basis {:project "deps.edn"}))
+            :javac-opts ["-proc:none"  "--release" "21"]
+           }))
+
+
+(defn uberjar [_]
+  (let [build-info (build-info nil)
+        uber-file  (io/file TARGET JAR_NAME)
+        basis      (b/create-basis {:project "deps.edn"})]
+
+    (println "build:" build-info)
+    (write-build-info build-info)
+
+    ;; (println "compile Java")
+    ;; (javac {:basis basis}) 
+
+    (b/copy-dir {:src-dirs ["src" RESOURCES TARGET_RESOURCES]
+                 :target-dir CLASS_DIR})
+
+    (println "compile Clojure")
+    (b/compile-clj {:basis basis
+                    :src-dirs ["src"]
+                    :class-dir CLASS_DIR
+                    })
+    
+    (println "pack uberjar")
+    (b/uber {:class-dir CLASS_DIR
+             :uber-file (str uber-file)
+             :basis basis
+             :main MAIN_CLASS})
+    
+    (println "complete:" (str uber-file))
+    ,))

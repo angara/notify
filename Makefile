@@ -1,24 +1,37 @@
-.EXPORT_ALL_VARIABLES:
-SHELL = bash
-
-.PHONY: dev build clean version deploy
 
 # # #
 
+APP_NAME   = angara-notify
+VER_MAJOR  = 1
+VER_MINOR  = 2
+MAIN_CLASS = notify.main
+
+JAR_NAME   = notify.jar
+UBER_JAR   = target/${JAR_NAME}
+
+# # #
+
+SHELL = bash
+.EXPORT_ALL_VARIABLES:
+.PHONY: dev build clean version deploy
+
+
+all: clean build deploy # restart
+
 dev:
 	bash -c "set -a && source .env && clj -M:dev:nrepl"
-
-version:
-	@clj -T:build print-version > ./VERSION && cat ./VERSION
 
 build:
 	@mkdir -p ./target/resources
 	@clj -T:build uberjar
 
 deploy:
-	scp target/notify.jar angara:/app/notify/
+	scp ${UBER_JAR} angara:/app/notify/
 
 clean:
-	rm -rf ./target
+	@clojure -T:build clean
+
+outdated:
+	@clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version "2.11.1264"}}}' -M -m antq.core
 
 #.

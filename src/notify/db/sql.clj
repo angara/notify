@@ -1,12 +1,11 @@
-
 (ns notify.db.sql  
   (:require
-    [mount.core :refer [defstate]]
-    [hikari-cp.core :refer [make-datasource]]
-    [honeysql.helpers :as h]
-    [mlib.config :refer [conf]]
-    [mlib.sql :refer [set-ds fetch fetch-one]]))
-;
+   [mount.core :refer [defstate args]]
+   [hikari-cp.core :refer [make-datasource]]
+   [honeysql.helpers :as h]
+   [mlib.sql :refer [set-ds fetch fetch-one]]
+   ,))
+
 
 ; https://github.com/tomekw/hikari-cp/
 ; (make-datasource
@@ -25,13 +24,14 @@
 (defstate ds
   :start
     (->
-      (:psql conf)
+      (args)
+      (:psql)
       (make-datasource)
       (set-ds))
 
   :stop
     (.close ds))
-;
+
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
@@ -62,8 +62,6 @@
     ; lastmsgid  | integer                     |           | not null | 0
     ; ordi       | integer                     |           | not null | 0)
 
-;
-
 
 (defn get-mail [id]
   (->
@@ -71,11 +69,11 @@
     (h/from PRIVATE_MESSAGES)
     (h/where [:= :id id])
     (fetch-one)))
-;
+
 
 (defn mail-read? [mail]
   (:dest_time mail))
-;
+
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
@@ -89,13 +87,13 @@
       [:= :tp.tid :?tid]
       [:> :lr.watch 0]
       [:> :tp.lastmsgid :lr.msgid])))
-;
+
 
 (defn topic-unread-watch [topic-id]
   (fetch 
     SELECT_WATCHED_UNREAD 
     {:tid (Integer/parseInt topic-id)}))
-;
+
 
 ;; ;; ;; ;; ;; ;; ;; ;; ;; ;;
 
@@ -110,13 +108,10 @@
       [:= :lr.uid :?uid]
       [:> :lr.watch 0]
       [:> :tp.lastmsgid :lr.msgid])))
-;
+
 
 (defn user-unread-topic [user-id topic-id]
   (fetch-one
     SELECT_USER_UNREAD_TOPIC
     { :tid (Integer/parseInt topic-id)
       :uid (Integer/parseInt user-id)}))
-;
-
-;;.

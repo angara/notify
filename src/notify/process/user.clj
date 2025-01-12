@@ -1,17 +1,15 @@
-
 (ns notify.process.user
   (:require
-    [taoensso.timbre  :refer [debug info warn]]
-    ;
-    [notify.sender.telegram :refer [firehose]]))
-;
+   [taoensso.telemere :refer [log!]]
+   [notify.sender.telegram :refer [firehose]]
+   ,))
+
 
 (defn register [event]
-  (debug "user/register:" event)
+  (log! ["user/register:" event])
   (firehose event))
-;
+
 
 (defn login [event]
-  (debug "user/login:" event)
+  (log! ["user/login:" event])
   (firehose event))
-;
