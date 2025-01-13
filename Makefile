@@ -29,6 +29,7 @@ run:
 	CONFIG_EDN=../conf/dev.edn java -jar ${UBER_JAR}
 
 deploy:
+#	scp run.sh angara:/app/notify/
 	scp ${UBER_JAR} angara:/app/notify/
 
 clean:
