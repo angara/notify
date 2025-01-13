@@ -19,7 +19,9 @@
 
          ;; https://github.com/taoensso/telemere
          com.taoensso/telemere       {:mvn/version "1.0.0-RC2"}
-         com.taoensso/telemere-slf4j {:mvn/version "1.0.0-RC2"}}
+         com.taoensso/telemere-slf4j {:mvn/version "1.0.0-RC2"}
+         org.slf4j/slf4j-api         {:mvn/version "2.0.16"}
+         }
 
   :paths ["src"] ;; "java"
 
