@@ -16,7 +16,7 @@ SHELL = bash
 .PHONY: dev build clean version deploy
 
 
-all: clean build deploy # restart
+all: clean build deploy restart
 
 dev:
 	bash -c "set -a && source .env && clj -M:dev:nrepl"
@@ -31,6 +31,10 @@ run:
 deploy:
 #	scp run.sh angara:/app/notify/
 	scp ${UBER_JAR} angara:/app/notify/
+
+
+restart:
+	ssh angara "ps ax | grep 'java -jar notify.jar' | grep -v grep | awk '{ print \$$1 }' | xargs kill "
 
 clean:
 	@clojure -T:build clean

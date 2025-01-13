@@ -1,6 +1,5 @@
 (ns mlib.tgapi
-  (:import 
-    [java.net SocketTimeoutException])
+  (:import [java.net SocketTimeoutException])
   (:require
    [clojure.string :refer [escape]]
    [jsonista.core :refer [write-value-as-string read-value keyword-keys-object-mapper]]
@@ -23,7 +22,7 @@
 
 (defn try-request [data]
   (try
-    (let [{:keys [status body error]} (http/request data)]
+    (let [{:keys [status body error]} @(http/request data)]
       (case status
         200 (:result (read-value body keyword-keys-object-mapper))
         303 ::retry
