@@ -1,43 +1,27 @@
-
 (ns notify.main
   (:gen-class)
   (:require
-    [clojure.java.io :as io]
-    [clojure.string :refer [blank? split trim]]
-    [mount.core     :refer [start-with-args]]
-    [taoensso.timbre  :refer [debug info warn] :as timbre]
-    ;;
-    [mlib.util      :refer [edn-read]]
-    [mlib.thread    :refer [join]]
-    ;;
-    [notify.process.inbound]
-    [notify.process.worker :refer [queue-worker]]
-  ))
+   [mount.core :as mount]
+   [taoensso.telemere :refer [log!]]
+   [mlib.thread :refer [join]]
+   [notify.config :as cfg]
+   [notify.process.inbound]
+   [notify.process.worker :refer [queue-worker]]
+   ))
 
 
-(def build-info
-  (delay (-> "build-info" (io/resource) (slurp) (trim))))
-
-  
-(defn load-env-configs [env]
-  (when env
-    (->> (split env #"\:")
-      (remove blank?)
-      (map edn-read))))
-
-
-(defn -main [& _]
-  
-  (timbre/merge-config!
-     {:output-fn  (partial timbre/default-output-fn {:stacktrace-fonts {}})
-      :min-level  [[#{"notify.*"} :debug]
-                   [#{"*"} :info]]})
-  
-  (info (str "start: " @build-info))
-
-  (start-with-args
-    (load-env-configs (System/getenv "CONFIG_EDN")))
-  ;;
-  (info "stop..." 
-    (join queue-worker)))
-;
+(defn -main []
+  (log! ["init:" (cfg/build-info)])
+  (try
+    (.addShutdownHook (Runtime/getRuntime) (Thread. #(mount/stop)))
+    (->
+     (cfg/deep-merge (cfg/base-config) (cfg/env-config))
+     (mount/start-with-args)
+     (as-> $ (log! ["started:" (str (:started $))])))
+    (let [rc (join queue-worker)]
+      (log! ["stop..." rc]))
+    (catch Exception ex
+      (log! {:level :warn :error ex :msg "exception in main"})
+      (Thread/sleep 2000)
+      (System/exit 1))
+    ,))

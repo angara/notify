@@ -1,50 +1,36 @@
-{
-  ;; main project config file
-
-  :notify 
-  {
-    :appname "anga/notify"
-
-    ;; :firehose {:channel -1000000000000}  
-    :telegram 
-    {
-      :timeout 3000
-      :retry 3}}
+{:notify {
+          ;; :firehose {:channel -1000000000000}  
+          :telegram
+          {:timeout 3000
+           :retry 3}}
       ;; :apikey "174999999:AeEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaEeA"
-      ;; :socks {:host "localhost" :port 9999}
 
-  
+
   ;; datasource
 
-  :redis {:url "${REDIS_ANGARA}"}
+ :redis {:url "REDIS_ANGARA"}
   ;; redis://angara:PASS@dbm:6379/0
 
-  :psql {:jdbc-url "${JDBC_ANGARA}"}
+ :psql {:jdbc-url "JDBC_ANGARA"}
 
-  :mdb-angara {:url "${MDB_ANGARA}"}
+ :mdb-angara {:url "MDB_ANGARA"}
   ;; mongodb://angara:PASSWORD@dbm:27017/angara
-  
+
   ;; jdbc:postgresql://dbm:5432/angara?user=angara&password=PASSWORD
   ;; https://github.com/tomekw/hikari-cp/
 
-  :sendmail
-  {
-    :smtp
-    {
-      :host "smtp.yandex.com"
-      :ssl  true
-      :port 465
-      :user "noreply@angara.net"
-      :pass "__PASSWORD__"}
+ :sendmail
+ {:smtp
+  {:host "smtp.yandex.com"
+   :ssl  true
+   :port 465
+   :user "noreply@angara.net"
+   :pass "__PASSWORD__"}
     ;
-    :envelope
-    {
-      :from "Angara.Net <noreply@angara.net>"
-      :to []
-      :subject ""}}
-  ;
-  
-  }
-;;.
-  
-
+  :envelope
+  {:from "Angara.Net <noreply@angara.net>"
+   :to []
+   :subject ""}}
+ ;
+ :tz "Asia/Irkutsk"
+ ,}

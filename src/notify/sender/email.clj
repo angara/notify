@@ -1,9 +1,8 @@
-
 (ns notify.sender.email
   (:require
     [postal.core :refer [send-message]]    
-    [taoensso.timbre  :refer [debug info warn]]
-    [mlib.config :refer [conf]]
+    [taoensso.telemere :refer [log!]]
+    [notify.config :refer [conf]]
   ))
 
 (defn send-mail [to subj text]
@@ -17,6 +16,6 @@
                   :body text}))]
     ;
     (if (-> rc :error (= :SUCCESS))
-      (info "send-mail.ok:" to subj)
-      (warn "send-mail.failed:" to rc))))
-;
+      (log! ["send-mail.ok:" to subj])
+      (log! :warn ["send-mail.failed:" to rc]))))
+

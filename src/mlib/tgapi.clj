@@ -2,66 +2,60 @@
   (:import 
     [java.net SocketTimeoutException])
   (:require
-    [clojure.string :refer [escape]]
-    [cheshire.core :refer [parse-string]]
-    [clj-http.client :as http]
-    [clj-http.conn-mgr :refer [make-socks-proxied-conn-manager]]))
-;
+   [clojure.string :refer [escape]]
+   [jsonista.core :refer [write-value-as-string read-value keyword-keys-object-mapper]]
+   [org.httpkit.client :as http]
+   ,))
+
 
 (def TIMEOUT 5000)
 (def RETRY   3)
 (def DELAY   10)
 
+
 (defn api-url [token method]
   (str "https://api.telegram.org/bot" token "/" (name method)))
-;
+
 
 (defn esc [text]
   (escape (str text) {\& "&amp;" \< "&lt;" \> "&gt;" \" "&quot;"}))
-;
 
-(defn api-try [url data]
+
+(defn try-request [data]
   (try
-    (let [{:keys [status body]} (http/post url data)]
+    (let [{:keys [status body error]} (http/request data)]
       (case status
-        200 (:result (parse-string body true))
+        200 (:result (read-value body keyword-keys-object-mapper))
         303 ::retry
         500 ::retry
-        (let [res (parse-string body true)]
-          (throw (ex-info (str "tgapi: status " status) res)))))
+        (let [res (read-value body keyword-keys-object-mapper)]
+          (throw (ex-info (str "tgapi: status " status) res error)))))
     (catch SocketTimeoutException _
       ::retry)))
-;
+
 
 (defn api 
   "{:apikey '...', :timeout 3000, :retry 3, :socks {:host '' :port 9999}}"
   [cfg method params] 
   (let [tout  (:timeout cfg TIMEOUT)
-        rmax  (:retry   cfg RETRY)
-        cmgr  (when-let [socks (:socks cfg)]
-                (make-socks-proxied-conn-manager (:host socks) (:port socks)))
-        url   (api-url (:apikey cfg) method)
-        data { :content-type :json
-               :form-params params
-               :throw-exceptions false
-               :connection-manager cmgr
-               :socket-timeout tout
-               :conn-timeout tout}]
+        rmax  (:retry cfg RETRY)
+        data {:url (api-url (:apikey cfg) method)
+              :method :post
+              :headers {"Content-Type" "application/json"}
+              :body (write-value-as-string params)
+              :connect-timeout tout
+              :timeout tout}]
     (loop [retry rmax]
       (if (< 0 retry)
         (let [_ (Thread/sleep DELAY)    ;; calc proper delay
-              res (api-try url data)]
+              res (try-request data)]
           (if (= res ::retry)
             (recur (dec retry))
             res))
-        ;;
         (throw
-          (ex-info (str "tgapi - retry limit reached: " rmax) 
-            {:message (str "tgapi - retry limit reached: " rmax)}))))))
-;
+         (ex-info (str "tgapi - retry limit reached: " rmax) 
+                  {:message (str "tgapi - retry limit reached: " rmax)}))))))
+
 
 (defn send-message [cfg chat text]
   (api cfg :sendMessage {:chat_id chat :text text :parse_mode "HTML"}))
-;
-
-;;.
