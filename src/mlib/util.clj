@@ -4,8 +4,8 @@
 
 (ns mlib.util
   (:require
-   [clojure.java.io :as io]
-   [clojure.edn :as edn]))
+   [clojure.string :as str]
+   ))
 
 
 (defn to-int
@@ -19,21 +19,12 @@
 
 
 
-
-;; ;; ;; time ;; ;; ;;
-
 (defn now-ms []
   (System/currentTimeMillis))
 
 
-;; ;; ;; edn ;; ;; ;;
-
-(defn edn-read [file]
-  (edn/read-string (slurp file)))
-
-
-(defn edn-resource [res]
-  (-> res io/resource slurp edn/read-string))
+(defn hesc [text]
+  (str/escape text {\& "&amp;" \< "&lt;" \> "&gt;" \" "&quot;"}))
 
 
 ;; ;; ;; deep merge ;; ;; ;;

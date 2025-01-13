@@ -21,9 +21,9 @@
 
 ;; notify-type
 ;;
-(def NFT_PRIVATE_MESSAGE :private_mesage)
-(def NFT_FORUM_MESSAGE   :forum_message)
-(def NFT_FORUM_TOPIC     :forum_topic)
+;; (def NFT_PRIVATE_MESSAGE :private_mesage)
+;; (def NFT_FORUM_MESSAGE   :forum_message)
+;; (def NFT_FORUM_TOPIC     :forum_topic)
 
 
 (comment
