@@ -30,4 +30,7 @@
   :envelope
   {:from "Angara.Net <noreply@angara.net>"
    :to []
-   :subject ""}}}
+   :subject ""}}
+ ;
+ :tz "Asia/Irkutsk"
+ ,}

@@ -25,6 +25,9 @@ build:
 	@mkdir -p ./target/resources
 	@clj -T:build uberjar
 
+run:
+	CONFIG_EDN=../conf/dev.edn java -jar ${UBER_JAR}
+
 deploy:
 	scp ${UBER_JAR} angara:/app/notify/
 

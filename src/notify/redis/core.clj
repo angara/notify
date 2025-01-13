@@ -1,8 +1,7 @@
 (ns notify.redis.core
   (:import 
-    [java.net URI]
-    ;; https://github.com/xetorthio/jedis
-    [redis.clients.jedis Jedis])
+   [java.net URI]
+   [redis.clients.jedis Jedis])
   (:require
    [jsonista.core :refer [write-value-as-string read-value keyword-keys-object-mapper]]
    [notify.const :refer [REDIS_CONNECT_TIMEOUT EVENT_QUEUE EVENT_QUEUE_SEQ]]
