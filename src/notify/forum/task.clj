@@ -56,7 +56,7 @@
        (* (:fetch-interval cfg) 1000)
        #(forum-photos (-> conf :notify :telegram) cfg)))
     (do
-      (log! :warn ["forumphoto did not start"])
+      (log! :warn ["forumphotos did not start"])
       false))
   :stop
   (stop-periodical-task forumphotos))

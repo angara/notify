@@ -33,6 +33,28 @@
       :last-time (jt/minus (jt/instant) (jt/seconds age-limit))
       :limit     fetch-limit}))
 
+(comment
+  (fetch-topics 1 100000 10)
+  ;;=> [{:tid 127731,
+  ;;     :closed false,
+  ;;     :lastupdate #object[java.time.LocalDateTime 0x3bac5fa1 "2025-01-14T14:31:39.708780"],
+  ;;     :msgnum 5,
+  ;;     :tgroup 70,
+  ;;     :created #object[java.time.LocalDateTime 0x2261f3fc "2025-01-14T10:52:27.436018"],
+  ;;     :lastmsgid 1469195,
+  ;;     :title "Состояние лыжни Переезд-Ангасолка",
+  ;;     :ordi 0,
+  ;;     :lastposter 12508,
+  ;;     :owner 53137}]
+
+  ;; { "_id" : "forumnews", "last_tid" : 127731, "ts" : ISODate("2025-01-14T02:59:44.676Z") }
+  ;; { "_id" : "forumphotos", "last_mid" : 1469201, "ts" : ISODate("2025-01-14T12:59:50.294Z") }
+
+  (state-var-put FORUMNEWS_LAST_TID 127731)
+
+  (state-var-put "forumphotos.last_msgid" 1469201)
+  
+  )
 
 (defn update-channel [tgc channel topics]
   (Thread/sleep 30)
