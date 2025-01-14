@@ -86,8 +86,7 @@
         ll (str "\n\n" username " - " msg-url)
         txt (str "Из темы:\n" (:title msg))
         txt (str (word-trunc txt (- 199 (.length ll))) ll)]
-    (tg/api (:apikey tgc) :sendPhoto 
-            {:chat_id channel :photo photo-url :caption txt})))
+    (tg/api tgc :sendPhoto {:chat_id channel :photo photo-url :caption txt})))
 
 
 (defn forum-photos [tgc cfg]

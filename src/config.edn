@@ -5,18 +5,16 @@
 
   :firehose {:channel -1000000000000}
 
-  :forumnews
-  {:channel        "@angara_forum"
-   :age-limit      86400    ;; 2+ hours (sec)
-   :fetch-limit    100     ;; 
-   :fetch-interval 600     ;; rescan period (sec)
-   :topics-per-message 10}
+  :forumnews {:channel        "@angara_forum"
+              :age-limit      86400    ;; 2+ hours (sec)
+              :fetch-limit    100     ;; 
+              :fetch-interval 600     ;; rescan period (sec)
+              :topics-per-message 10}
 
-  :forumphotos
-  {:channel        "@angara_photos"
-   :age-limit      86400    ;; 2+ hours (sec)
-   :fetch-limit    5        ;; 
-   :fetch-interval 150}     ;; rescan period (sec)
+  :forumphotos {:channel        "@angara_photos"
+                :age-limit      86400    ;; 2+ hours (sec)
+                :fetch-limit    5        ;; 
+                :fetch-interval 150}     ;; rescan period (sec)
   }
       
 

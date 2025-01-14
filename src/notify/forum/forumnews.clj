@@ -53,7 +53,7 @@
   (state-var-put FORUMNEWS_LAST_TID 127731)
 
   (state-var-put "forumphotos.last_msgid" 1469201)
-  
+
   )
 
 (defn update-channel [tgc channel topics]
@@ -61,9 +61,11 @@
   (let [fmt (fn [t] (str "<a href=\"https://angara.net/forum/t" 
                          (:tid t) "\">" (hesc (:title t)) "</a>"))
         txs (map fmt (reverse topics))]
-    (tg/send-message tgc channel {:text (str "-\n" (s/join "\n\n" txs))
-                                     :parse_mode "HTML"
-                                     :disable_web_page_preview true})))
+    (tg/api tgc :sendMessage
+            {:chat_id channel
+             :text (str "-\n" (s/join "\n\n" txs))
+             :parse_mode "HTML"
+             :disable_web_page_preview true})))
 
 
 (defn forum-task [tgc cfg]

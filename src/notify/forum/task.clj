@@ -2,8 +2,7 @@
   (:require
    [clojure.core.async :refer [thread <!!]]
    [taoensso.telemere :refer [log!]]
-   [mount.core :refer [defstate]]
-   [notify.config :refer [conf]]
+   [mount.core :refer [defstate args]]
    [notify.forum.forumnews :refer [forum-task]]
    [notify.forum.forumphotos :refer [forum-photos]]
    ))
@@ -34,12 +33,12 @@
 
 (defstate forumnews
   :start
-  (if-let [cfg (-> conf :notify :forumnews)]
+  (if-let [cfg (-> (args) :notify :forumnews)]
     (do
       (log! ["forumnews start:" cfg])
       (start-periodical-task
        (* (:fetch-interval cfg) 1000)
-       #(forum-task (-> conf :notify :telegram) cfg)))
+       #(forum-task (-> (args) :notify :telegram) cfg)))
     (do
       (log! :warn ["forumnews did not start"])
       false))
@@ -49,12 +48,12 @@
 
 (defstate forumphotos
   :start
-  (if-let [cfg (-> conf :notify :forumphotos)]
+  (if-let [cfg (-> (args) :notify :forumphotos)]
     (do
       (log! ["forumphotos start:" cfg])
       (start-periodical-task
        (* (:fetch-interval cfg) 1000)
-       #(forum-photos (-> conf :notify :telegram) cfg)))
+       #(forum-photos (-> (args) :notify :telegram) cfg)))
     (do
       (log! :warn ["forumphotos did not start"])
       false))
