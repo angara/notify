@@ -7,6 +7,7 @@
    [notify.config :as cfg]
    [notify.process.inbound]
    [notify.process.worker :refer [queue-worker]]
+   [notify.forum.task]
    ))
 
 

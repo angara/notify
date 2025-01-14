@@ -9,6 +9,9 @@ MAIN_CLASS = notify.main
 JAR_NAME   = notify.jar
 UBER_JAR   = target/${JAR_NAME}
 
+PROD_HOST  = angara
+PROD_PATH  = /app/notify
+
 # # #
 
 SHELL = bash
@@ -29,12 +32,10 @@ run:
 	CONFIG_EDN=../conf/dev.edn java -jar ${UBER_JAR}
 
 deploy:
-#	scp run.sh angara:/app/notify/
-	scp ${UBER_JAR} angara:/app/notify/
-
+	scp ${UBER_JAR} ${PROD_HOST}:${PROD_PATH}
 
 restart:
-	ssh angara "ps ax | grep 'java -jar notify.jar' | grep -v grep | awk '{ print \$$1 }' | xargs kill "
+	ssh ${PROD_HOST} "ps ax | grep 'java -jar ${JAR_NAME}' | grep -v grep | awk '{ print \$$1 }' | xargs kill "
 
 clean:
 	@clojure -T:build clean

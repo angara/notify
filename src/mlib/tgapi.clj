@@ -56,5 +56,16 @@
                   {:message (str "tgapi - retry limit reached: " rmax)}))))))
 
 
-(defn send-message [cfg chat text]
-  (api cfg :sendMessage {:chat_id chat :text text :parse_mode "HTML"}))
+(defn send-message [tgc chat text]
+  (api tgc :sendMessage {:chat_id chat :text text :parse_mode "HTML"}))
+
+
+
+(comment
+
+  (def nfy (:notify notify.config/conf))
+  (def tgc (assoc (:telegram nfy) :timeout 10000))
+  
+  (send-message tgc "@angara_photos" "test1")
+
+  )

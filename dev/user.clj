@@ -38,7 +38,7 @@
   (-> 
    (cfg/deep-merge (cfg/base-config) (cfg/env-config))
    (mount/with-args)
-   (mount/only #{#'notify.config/conf})
+   (mount/only #{#'notify.config/conf #'notify.db.sql/ds})
    (mount/start)
    )
 
