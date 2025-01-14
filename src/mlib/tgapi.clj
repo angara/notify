@@ -22,7 +22,6 @@
 
 (defn try-request [data]
   (try
-    (prn "data:" data)
     (let [{:keys [status body error]} @(http/request data)]
       (case status
         200 (:result (read-value body keyword-keys-object-mapper))
