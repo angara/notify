@@ -1,15 +1,31 @@
 (ns mlib.tgapi
-  (:import [java.net SocketTimeoutException])
+  (:import
+   [java.net SocketTimeoutException]
+   [java.net.http HttpTimeoutException])
   (:require
    [clojure.string :refer [escape]]
-   [jsonista.core :refer [write-value-as-string read-value keyword-keys-object-mapper]]
-   [org.httpkit.client :as http]
+   [jsonista.core :refer [write-value-as-bytes read-value keyword-keys-object-mapper]]
+   [hato.client :as http]
+   [mlib.http.client :as http-client]
    ,))
 
 
 (def TIMEOUT 5000)
 (def RETRY   3)
 (def DELAY   10)
+
+
+(defonce ^:private http-client* (atom nil))
+
+
+(defn set-http-client!
+  "Installs the process-wide Telegram HTTP client."
+  [client]
+  (reset! http-client* client))
+
+
+(defn- client []
+  (or @http-client* (set-http-client! (http-client/make-http-client))))
 
 
 (defn api-url [token method]
@@ -22,7 +38,7 @@
 
 (defn try-request [data]
   (try
-    (let [{:keys [status body error]} @(http/request data)]
+    (let [{:keys [status body error]} (http/request data)]
       (case status
         200 (:result (read-value body keyword-keys-object-mapper))
         303 ::retry
@@ -30,6 +46,8 @@
         (let [res (read-value body keyword-keys-object-mapper)]
           (throw (ex-info (str "tgapi: status " status) res error)))))
     (catch SocketTimeoutException _
+      ::retry)
+    (catch HttpTimeoutException _
       ::retry)))
 
 
@@ -40,10 +58,11 @@
         rmax  (:retry cfg RETRY)
         data {:url (api-url (:apikey cfg) method)
               :method :post
+              :http-client (client)
               :headers {"Content-Type" "application/json"}
-              :body (write-value-as-string params)
-              :connect-timeout tout
-              :timeout tout}]
+              :body (write-value-as-bytes params)
+              :timeout tout
+              :throw-exceptions? false}]
     (loop [retry rmax]
       (if (< 0 retry)
         (let [_ (Thread/sleep DELAY)    ;; calc proper delay
